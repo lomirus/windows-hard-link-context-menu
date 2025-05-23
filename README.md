@@ -16,7 +16,7 @@ cargo build --release
 计算机\HKEY_CLASSES_ROOT\*\shell\创建硬链接\command\
 ```
 
-将 command 目录的 `(默认)` 字段的值修改为 `C:\Packages\windows-hard-link-context-menu.exe %1`.
+将 `command` 目录的 `(默认)` 字段的值修改为 `C:\Packages\windows-hard-link-context-menu.exe %1`.
 
 ### 结果展示
 
