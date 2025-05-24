@@ -2,16 +2,12 @@
 
 use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
-use winsafe::{co, HWND, prelude::*};
+use winsafe::{HWND, co, prelude::*};
 
-fn alert_error(message: &str) -> Result<()>{
+fn alert_error(message: &str) -> Result<()> {
     let hwnd: HWND = HWND::DESKTOP;
 
-    hwnd.MessageBox(
-        message,
-        "Error",
-        co::MB::OK | co::MB::ICONWARNING,
-    )?;
+    hwnd.MessageBox(message, "Error", co::MB::OK | co::MB::ICONWARNING)?;
 
     Ok(())
 }
@@ -36,26 +32,24 @@ fn create_hard_link(path: &Path) -> Result<()> {
         ),
     };
 
-    std::fs::hard_link(
-        path,
-        path.parent()
-            .context("Failed to get target parent")?
-            .join(new_filename),
-    )?;
+    let new_path = path
+        .parent()
+        .context("Failed to get target parent")?
+        .join(new_filename);
+
+    std::fs::hard_link(path, new_path)?;
 
     Ok(())
 }
 
-fn main() {
+fn get_source_file_path() -> PathBuf {
     let args = std::env::args().collect::<Vec<String>>();
-    let target = match args.get(1) {
-        Some(v) => v,
-        None => {
-            alert_error("Target path argument is empty").unwrap();
-            return;
-        }
-    };
-    let path = PathBuf::from(target);
+    let path = args[1..].join(" ");
+    PathBuf::from(path)
+}
+
+fn main() {
+    let path = get_source_file_path();
     if let Err(e) = create_hard_link(&path) {
         alert_error(&e.to_string()).unwrap();
     }
